@@ -56,7 +56,7 @@ server.delete('/api/users/:id', (req, res) => {
     Users.remove(req.params.id)
       .then(possibleUser => {
           if(!possibleUser) {
-              res.json(404).json({ message: "The user with the specified ID does not exist" })
+              res.status(404).json({ message: "The user with the specified ID does not exist" })
           } else {
               res.status(200).json(possibleUser)
           }
@@ -66,21 +66,24 @@ server.delete('/api/users/:id', (req, res) => {
       })  
 })
 
-//PUT
+// PUT	
 server.put('/api/users/:id', (req, res) => {
-    Users.update(req.params.id, req.body)
+    const user = req.body
+    const id = req.params.id
+    
+    Users.update(id, user)
       .then(possibleUser => {
-          if (!possibleUser) {
-              res.status(404).json({ message: " The user with the specified ID does not exist" })
-          } else if (!user.name || !user.bio) {
-              res.status(400).json({ message: "Please provide name and bio for the user" })
-          } else {
-              res.json(possibleUser)
-          }
-      }) 
+        if (!possibleUser) {
+          res.status(404).json({ message: "The user with the specified ID does not exist" })
+        } else if (!user.name || !user.bio) {
+          res.status(400).json({ message: "Please provide name and bio for the user" })
+        } else {
+          res.json(possibleUser)
+        }
+      })
       .catch(err => {
-          res.status(500).json({ message: "The user informaiton could not be modified" })
-      }) 
-})
+        res.status(500).json({ message: "The user information could not be modified" })
+      })
+  })
 
 module.exports = server; // EXPORT YOUR SERVER instead of {}
